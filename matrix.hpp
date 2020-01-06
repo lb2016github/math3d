@@ -769,7 +769,7 @@ TMatrix44<T> TMatrix44<T>::makeTranlationMatrix(const TVector3<T>& trans)
 {
 	TMatrix44<T> mtx;
 	mtx.m14 = trans.x;
-	mtx.m24 = tranz.y;
+	mtx.m24 = trans.y;
 	mtx.m34 = trans.z;
 	mtx.m44 = 1;
 	return mtx;
