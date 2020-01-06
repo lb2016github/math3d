@@ -96,6 +96,11 @@ public:
 	*/
 	static T distance(const VECTOR<T>& a, const VECTOR<T>& b);
 	static T distanceSquare(const VECTOR<T>& a, const VECTOR<T>& b);
+	/*
+	lerp two vectors
+	*/
+	template<class P>
+	static VECTOR<T> lerp(const VECTOR<T>& a, const VECTOR<T>& b, P factor);
 };
 
 /*
@@ -328,6 +333,13 @@ inline T VECTOR<T>::distanceSquare(const VECTOR<T>& a, const VECTOR<T>& b)
 	ZCODE(T deltaZ = a.z - b.z;)
 	WCODE(T deltaW = a.w - b.w;)
 	return deltaX * deltaX + deltaY * deltaY ZCODE(+deltaZ * deltaZ) WCODE(+deltaW * deltaW);
+}
+
+template<class T>
+template<class P>
+inline VECTOR<T> VECTOR<T>::lerp(const VECTOR<T>& a, const VECTOR<T>& b, P factor)
+{
+	return a + (b - a) * factor;
 }
 
 template<class T>

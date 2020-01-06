@@ -120,9 +120,9 @@ inline TMatrix44<T> TEulerAngle<T>::toRotationMatrix(const TEulerAngle<T>& eulAn
 	T cosZ = cos(eulAngle.z);
 	T sinZ = sin(eulAngle.z);
 	return TMatrix44<T>(
-		cosY * cosZ - sinX * sinY * sinZ,	-cosX * sinZ,	sinY * cosZ + sinX * cosY * sinZ,	0,
-		cosY * sinZ + sinX * sinY * cosZ,	cosX * cosZ,	sinY * sinZ - sinX * cosY * cosZ,	0,
-		-cosX * sinY,						sinX,			cosX * cosY,						0,
-		0,									0,				0,									1
-		)
+		cosY * cosZ - sinX * sinY * sinZ, -cosX * sinZ, sinY * cosZ + sinX * cosY * sinZ, 0,
+		cosY * sinZ + sinX * sinY * cosZ, cosX * cosZ, sinY * sinZ - sinX * cosY * cosZ, 0,
+		-cosX * sinY, sinX, cosX * cosY, 0,
+		0, 0, 0, 1
+		);
 }

@@ -29,6 +29,8 @@ public:
 		T m31, T m32, T m33, T m34,
 		T m41, T m42, T m43, T m44
 	);
+
+// operation to data
 public:
 	/*
 	get data
@@ -50,6 +52,22 @@ public:
 	set value of matrix
 	*/
 	void setValue(unsigned int row, unsigned int col, T value);
+
+// operation as a rotation matrix
+public:
+	/*
+	get forward
+	*/
+	TVector3<T> getForward();
+	/*
+	get right
+	*/
+	TVector3<T> getRight();
+	/*
+	get up
+	*/
+	TVector3<T> getUp();
+
 
 public:
 	/*
@@ -164,6 +182,10 @@ public:
 	@return: matrix
 	*/
 	static TMatrix44<T> makePerspectiveProjectionMatrix(T fovy, T aspect, T n, T f);
+	/*
+	return identity matrix
+	*/
+	static TMatrix44<T> makeIdentityMatrix();
 
 public:
 	/*
@@ -380,6 +402,33 @@ inline void TMatrix44<T>::setValue(unsigned int row, unsigned int col, T value)
 		default: m44 = value; return;
 		}
 	}
+}
+
+template<class T>
+inline TVector3<T> TMatrix44<T>::getForward()
+{
+	auto c = col(2);
+	TVector3<T> forward(c.x, c.y, c.z);
+	forward.normalize();
+	return forward;
+}
+
+template<class T>
+inline TVector3<T> TMatrix44<T>::getRight()
+{
+	auto c = col(0);
+	TVector3<T> right(c.x, c.y, c.z);
+	right.normalize();
+	return right;
+}
+
+template<class T>
+inline TVector3<T> TMatrix44<T>::getUp()
+{
+	auto c = col(1);
+	TVector3<T> up(c.x, c.y, c.z);
+	up.normalize();
+	return up;
 }
 
 template<class T>
@@ -739,7 +788,7 @@ TMatrix44<T> TMatrix44<T>::makeScaleMatrix(const TVector3<T>& scale)
 template<class T>
 inline TMatrix44<T> TMatrix44<T>::makePerspectiveProjectionMatrix(T fovy, T aspect, T n, T f)
 {
-	assert(fovy != 0)
+	assert(fovy != 0);
 	T t = tan(fovy * 0.5);
 	T nOneOverFN = -1 / (f - n);
 	T oneOverT = 1 / t;
@@ -748,6 +797,17 @@ inline TMatrix44<T> TMatrix44<T>::makePerspectiveProjectionMatrix(T fovy, T aspe
 		0,	oneOverT,	0,	0,
 		0,	0,	(f + n) * nOneOverFN,	2 * f * n * nOneOverFN,
 		0,	0,	-1,	0
+		);
+}
+
+template<class T>
+inline TMatrix44<T> TMatrix44<T>::makeIdentityMatrix()
+{
+	return TMatrix44<T>(
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1
 		);
 }
 
