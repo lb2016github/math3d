@@ -40,6 +40,10 @@ public:
 	magnitude of vector
 	*/
 	T magnitude();
+	/*
+	return data pointer
+	*/
+	T* getData();
 
 public:
 	/*
@@ -72,6 +76,10 @@ public:
 	VECTOR<T>& operator-= (T a);
 	VECTOR<T>& operator*= (T a);
 	VECTOR<T>& operator/= (T a);
+	/*
+	overload []
+	*/
+	T& operator[](unsigned int idx);
 public:
 	/*
 	dot operation
@@ -112,6 +120,13 @@ template<class T>
 inline VECTOR<T>::VECTOR(const VECTOR<T>& vec)
 	: x(vec.x), y(vec.y) ZCODE(COMMA z(vec.z)) WCODE(COMMA w(vec.w))
 {
+}
+
+
+template<class T>
+inline T* VECTOR<T>::getData()
+{
+	return (T*)this;
 }
 
 template<class T>
@@ -269,6 +284,18 @@ inline VECTOR<T>& VECTOR<T>::operator/=(T a)
 }
 
 template<class T>
+inline T& VECTOR<T>::operator[](unsigned int idx)
+{
+	switch (idx)
+	{
+		ZCODE(case 2: return z;)
+		WCODE(case 3: return w;)
+		case 1: return y;
+		default: return x;
+	}
+}
+
+template<class T>
 inline T VECTOR<T>::dot(const VECTOR<T>& a, const VECTOR<T> b)
 {
 	return a.x * b.x + a.y * b.y ZCODE(+a.z * b.z) WCODE(+ a.w * b.w);
@@ -320,3 +347,4 @@ inline VECTOR<T> operator*(T a, const VECTOR<T>& vec)
 {
 	return VECTOR<T>(a * vec.x, a * vec.y ZCODE(COMMA  a * vec.z) WCODE(COMMA  a * vec.w));
 }
+

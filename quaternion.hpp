@@ -13,6 +13,7 @@ public:
 	/*
 	constrctors
 	*/
+	TQuaternion() {};
 	TQuaternion(T w, T x, T y, T z);
 	TQuaternion(const TQuaternion& q);
 public:

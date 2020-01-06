@@ -31,6 +31,28 @@ public:
 	);
 public:
 	/*
+	get data
+	*/
+	T* getData() { return (T*)this; }
+	/*
+	get row of index, which is in range[0, 3]
+	*/
+	TVector4<T> row(unsigned int index) const;
+	/*
+	get col of index, which is in range[0, 3]
+	*/
+	TVector4<T> col(unsigned int index) const;
+	/*
+	return value of certain 
+	*/
+	T& value(unsigned int row, unsigned int col);
+	/*
+	set value of matrix
+	*/
+	void setValue(unsigned int row, unsigned int col, T value);
+
+public:
+	/*
 	get scale
 	*/
 	TVector3<T> getScale();
@@ -246,6 +268,118 @@ inline TMatrix44<T>::TMatrix44(T m11, T m12, T m13, T m14, T m21, T m22, T m23, 
 	m31(m31), m32(m32), m33(m33), m34(m34),
 	m41(m41), m42(m42), m43(m43), m44(m44)
 {
+}
+
+template<class T>
+inline TVector4<T> TMatrix44<T>::row(unsigned int index) const
+{
+	switch (index)
+	{
+	case 0:
+		return TVector4<T>(m11, m12, m13, m14);
+	case 1:
+		return TVector4<T>(m21, m22, m23, m24);
+	case 2:
+		return TVector4<T>(m31, m32, m33, m34);
+	default:
+		return TVector4<T>(m41, m42, m43, m44);
+	}
+}
+
+template<class T>
+inline TVector4<T> TMatrix44<T>::col(unsigned int index) const
+{
+	switch (index)
+	{
+	case 0:
+		return TVector4<T>(m11, m21, m31, m41);
+	case 1:
+		return TVector4<T>(m12, m22, m32, m42);
+	case 2:
+		return TVector4<T>(m13, m23, m33, m43);
+	default:
+		return TVector4<T>(m14, m24, m34, m44);
+	}
+}
+
+template<class T>
+inline T& TMatrix44<T>::value(unsigned int row, unsigned int col)
+{
+	switch (row)
+	{
+	case 0:
+		switch (col)
+		{
+		case 0: return m11;
+		case 1: return m12;
+		case 2: return m13;
+		default: return m14;
+		}
+	case 1:
+		switch (col)
+		{
+		case 0: return m21;
+		case 1: return m22;
+		case 2: return m23;
+		default: return m24;
+		}
+	case 2:
+		switch (col)
+		{
+		case 0: return m31;
+		case 1: return m32;
+		case 2: return m33;
+		default: return m34;
+		}
+	default:
+		switch (col)
+		{
+		case 0: return m41;
+		case 1: return m42;
+		case 2: return m43;
+		default: return m44;
+		}
+	}
+}
+
+template<class T>
+inline void TMatrix44<T>::setValue(unsigned int row, unsigned int col, T value)
+{
+	switch (row)
+	{
+	case 0:
+		switch (col)
+		{
+		case 0: m11 = value; return;
+		case 1: m12 = value; return;
+		case 2: m13 = value; return;
+		default: m14 = value; return;
+		}
+	case 1:
+		switch (col)
+		{
+		case 0: m21 = value; return;
+		case 1: m22 = value; return;
+		case 2: m23 = value; return;
+		default: m24 = value; return;
+		}
+	case 2:
+		switch (col)
+		{
+		case 0: m31 = value; return;
+		case 1: m32 = value; return;
+		case 2: m33 = value; return;
+		default: m34 = value; return;
+		}
+	default:
+		switch (col)
+		{
+		case 0: m41 = value; return;
+		case 1: m42 = value; return;
+		case 2: m43 = value; return;
+		default: m44 = value; return;
+		}
+	}
 }
 
 template<class T>

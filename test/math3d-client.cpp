@@ -4,11 +4,13 @@
 #include "vector.hpp"
 #include <assert.h>
 #include "matrix.hpp"
+#include "quaternion.hpp"
 
 typedef TVector2<float> Vector2f;
 typedef TVector3<float> Vector3f;
 typedef TVector4<float> Vector4f;
 typedef TMatrix44<float> Matrix;
+typedef TQuaternion<float> Quaternion;
 
 template<class T>
 void assertVector(const TVector3<T>& vec, T x, T y, T z)
@@ -112,11 +114,20 @@ void testMatrix44()
 
 }
 
+union TestUnion
+{
+	TestUnion(): mtx() {}
+	Vector3f vec;
+	Matrix mtx;
+	Quaternion qua;
+};
+
 int main(int argc, char** argv)
 {
 	//testVector3();
 	//testVector2();
 	//testVector4();
 	testMatrix44();
+	TestUnion tu;
 	system("pause");
 }
