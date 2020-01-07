@@ -756,12 +756,93 @@ inline TMatrix44<T> TMatrix44<T>::makeRotationMatrix(const TEulerAngle<T>& euler
 {
 	T cosY = cos(eulerAngle.y), cosX = cos(eulerAngle.x), cosZ = cos(eulerAngle.z);
 	T sinY = sin(eulerAngle.y), sinX = sin(eulerAngle.x), sinZ = sin(eulerAngle.z);
-	return TMatrix44<T>(
-		cosY * cosZ - sinX * sinY * sinZ,	-cosX * sinZ,	sinY * cosZ + sinX * cosY * sinZ,	0,
-		cosY * sinZ + sinX * sinY * cosZ,	cosX * cosZ,	sinY * sinZ - sinX * cosY * cosZ,	0,
-		-cosX * sinY,						sinX,			cosX * cosY,						0,
-		0,									0,				0,									1
-		);
+	switch (eulerAngle.type)
+	{
+	case EulerRotationSequence::YXZ:
+#define c1 cosZ
+#define s1 sinZ
+#define c2 cosX
+#define s2 sinX
+#define c3 cosY
+#define s3 sinY
+		return TMatrix44<T>(
+			c1 * c3 - s1 * s2 * s3,	-c2 * s1,	c1 * s3 + c3 * s1 * s2,	0,
+			c3 * s1 + c1 * s2 * s3,	c1 * c2,	s1 * s3 - c1 * c3 * s2,	0,
+			-c2 * s3,	s2,	c2 * c3,	0,
+			0,	0,	0,	1
+			);
+#undef c1 s1 c2 s2 c3 s3
+	case EulerRotationSequence::ZXY:
+#define c1 cosY
+#define s1 sinY
+#define c2 cosX
+#define s2 sinX
+#define c3 cosY
+#define s3 sinY
+		return TMatrix44<T>(
+			c1 * c3 + s1 * s2 * s3,	c3 * s1 * s2 - c1 * s3,		c2 * s1,	0,
+			c2 * s3,	c2 * c3,	-s2,	0,
+			c1 * s2 * s3 - c3 * s1,	c1 * c3 * s2 + s1 * s3,	c1 * c2,	0,
+			0,	0,	0,	1
+			);
+#undef c1 s1 c2 s2 c3 s3
+	case EulerRotationSequence::YZX:
+#define c1 cosX
+#define s1 sinX
+#define c2 cosZ
+#define s2 sinZ
+#define c3 cosY
+#define s3 sinY
+		return TMatrix44<T>(
+			c2 * c3,	-s2,	c2 * s3,	0,
+			s1 * s3 + c1 * c3 * s2,	c1 * c2,	c1 * s2 * s3 - c3 * s1,	0,
+			c3 * s1 * s2 - c1 * s3,	c2 * s1,	c1 * c3 + s1 * s2 * s3,	0,
+			0,	0,	0,	1
+			);
+#undef c1 s1 c2 s2 c3 s3
+	case EulerRotationSequence::XZY:
+#define c1 cosY
+#define s1 sinY
+#define c2 cosZ
+#define s2 sinZ
+#define c3 cosX
+#define s3 sinX
+		return TMatrix44<T>(
+			c1 * c2, s1 * s3 - c1 * c3 * s2, c3 * s1 + c1 * s2 * s3,	0,
+			s2, c2 * c3, -c2 * s3,	0,
+			-c2 * s1, c1 * s3 + c3 * s1 * s2, c1 * c3 - s1 * s2 * s3,	0,
+			0,	0,	0,	1
+			);
+#undef c1 s1 c2 s2 c3 s3
+	case EulerRotationSequence::XYZ:
+#define c1 cosZ
+#define s1 sinZ
+#define c2 cosY
+#define s2 sinY
+#define c3 cosX
+#define s3 sinX
+		return TMatrix44<T>(
+			c1 * c2,	c1 * s2 * s3 - c3 * s1,		s1 * s3 + c1 * c3 * s2,	0,
+			c2 * s1,	c1 * c3 + s1 * s2 * s3,	c3 * s1 * s2 - c1 * s3,	0,
+			-s2,	c2 * s3,	c2 * c3,	0,
+			0,	0,	0,	1
+			);
+#undef c1 s1 c2 s2 c3 s3
+	case EulerRotationSequence::ZYX:
+#define c1 cosX
+#define s1 sinX
+#define c2 cosY
+#define s2 sinY
+#define c3 cosZ
+#define s3 sinZ
+		return TMatrix44<T>(
+			c2 * c3,	-c2 * s3,	s2,	0,
+			c1 * s3 + c3 * s1 * s2,	c1 * c3 - s1 * s2 * s3,	-c2 * s1,	0,
+			s1 * s3 - c1 * c3 * s2,	c3 * s1 + c1 * s2 * s3,	c1 * c2,	0,
+			0,	0,	0,	1
+			);
+#undef c1 s1 c2 s2 c3 s3
+	}
 }
 
 template<class T>

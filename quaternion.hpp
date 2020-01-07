@@ -36,13 +36,15 @@ public:
 	get rotation quaternions
 	*/
 	template<class P>
-	static TQuaternion<T> getRotateAboutX(P delta);
+	static TQuaternion<T> makeQuaRotateAboutX(P delta);
 	template<class P>
-	static TQuaternion<T> getRotateAboutY(P delta);
+	static TQuaternion<T> makeQuaRotateAboutY(P delta);
 	template<class P>
-	static TQuaternion<T> getRotateAboutZ(P delta);
+	static TQuaternion<T> makeQuaRotateAboutZ(P delta);
 	template<class P, class Q>
-	static TQuaternion<T> getRotateAboutAxis(const TVector3<P>& axis, Q delta);
+	static TQuaternion<T> makeQuaRotateAboutAxis(const TVector3<P>& axis, Q delta);
+	template<class P>
+	static TQuaternion<T> makeQuaternion(const TEulerAngle<P>& eulerAngle);
 
 	/*
 	dot product
@@ -197,7 +199,7 @@ inline TQuaternion<T>& TQuaternion<T>::operator*=(const TQuaternion<T>& a)
 
 template<class T>
 template<class P>
-inline TQuaternion<T> TQuaternion<T>::getRotateAboutX(P delta)
+inline TQuaternion<T> TQuaternion<T>::makeQuaRotateAboutX(P delta)
 {
 	T halftheta = delta * 0.5;
 	return TQuaternion<T>(cos(halftheta), sin(halftheta), 0, 0);
@@ -205,7 +207,7 @@ inline TQuaternion<T> TQuaternion<T>::getRotateAboutX(P delta)
 
 template<class T>
 template<class P>
-inline TQuaternion<T> TQuaternion<T>::getRotateAboutY(P delta)
+inline TQuaternion<T> TQuaternion<T>::makeQuaRotateAboutY(P delta)
 {
 	T halftheta = delta * 0.5;
 	return TQuaternion<T>(cos(halftheta), 0, sin(halftheta), 0);
@@ -213,7 +215,7 @@ inline TQuaternion<T> TQuaternion<T>::getRotateAboutY(P delta)
 
 template<class T>
 template<class P>
-inline TQuaternion<T> TQuaternion<T>::getRotateAboutZ(P delta)
+inline TQuaternion<T> TQuaternion<T>::makeQuaRotateAboutZ(P delta)
 {
 	T halftheta = delta * 0.5;
 	return TQuaternion<T>(cos(halftheta), 0, 0, sin(halftheta));
@@ -221,7 +223,7 @@ inline TQuaternion<T> TQuaternion<T>::getRotateAboutZ(P delta)
 
 template<class T>
 template<class P, class Q>
-inline TQuaternion<T> TQuaternion<T>::getRotateAboutAxis(const TVector3<P>& axis, Q delta)
+inline TQuaternion<T> TQuaternion<T>::makeQuaRotateAboutAxis(const TVector3<P>& axis, Q delta)
 {
 	T halftheta = delta * 0.5;
 	T sinHalfTheta = sin(halftheta);

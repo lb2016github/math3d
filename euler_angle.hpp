@@ -8,10 +8,19 @@ class TMatrix44;
 template<class T>
 class TQuaternion;
 
+enum class EulerRotationSequence
+{
+	XYZ,
+	XZY,
+	YXZ,
+	YZX,
+	ZXY,
+	ZYX
+};
 
 /*
 supply some operations for eulerangle
-the euler angle is defined in extrinsic y->x->z(yaw-pitch-roll)
+the euler angle is by default defined in extrinsic rotaion y->x->z(yaw-pitch-roll)
 yaw is in range[-PI, PI]
 pitch is in range[-PI / 2, PI / 2]
 roll is in range[-PI, PI]
@@ -20,9 +29,13 @@ template<class T>
 class TEulerAngle: public TVector3<T>
 {
 public:
+	EulerRotationSequence type{ EulerRotationSequence::YXZ };
+public:
 	TEulerAngle() : TVector3<T>() {}
 	TEulerAngle(T x, T y, T z) : TVector3<T>(x, y, z) {}
-	TEulerAngle(const TEulerAngle<T>& eulerAngle) : TVector3<T>(eulerAngle) {}
+	TEulerAngle(T x, T y, T z, EulerRotationSequence rotSeq) : TVector3<T>(x, y, z), type(rotSeq) {}
+	TEulerAngle(const TEulerAngle<T>& eulerAngle) : TVector3<T>(eulerAngle), type(eulerAngle.type) {}
+	TEulerAngle<T>& operator=(const TEulerAngle<T>& vec); 
 public:
 	/*
 	make self identity
@@ -45,14 +58,25 @@ public:
 	/*
 	convert euler angle to quaternion
 	*/
-	static TQuaternion<T> toTQuaternion(const TEulerAngle<T>& eulAngle);
-	/*
-	convert euler angle to rotation matrix
-	*/
-	static TMatrix44<T> toRotationMatrix(const TEulerAngle<T>& eulAngle);
+	static TQuaternion<T> toQuaternion(const TEulerAngle<T>& eulAngle);
 };
 
 
+
+template<class T>
+inline TEulerAngle<T>& TEulerAngle<T>::operator=(const TEulerAngle<T>& angle)
+{
+	if (this == &angle) return *this;
+	TVector3<T>::operator=(angle);
+	type = angle.type;
+	return *this;
+}
+
+template<class T>
+inline void TEulerAngle<T>::identity()
+{
+	x = 0; y = 0; z = 0;
+}
 
 template<class T>
 inline TEulerAngle<T> TEulerAngle<T>::fromTQuaternion(const TQuaternion<T>& q)
@@ -92,7 +116,7 @@ inline TEulerAngle<T> TEulerAngle<T>::fromRotationMatrix(const TMatrix44<T>& mtx
 }
 
 template<class T>
-inline TQuaternion<T> TEulerAngle<T>::toTQuaternion(const TEulerAngle& eulAngle)
+inline TQuaternion<T> TEulerAngle<T>::toQuaternion(const TEulerAngle& eulAngle)
 {
 	T x = eulAngle.x * 0.5;
 	T y = eulAngle.y * 0;5;
@@ -110,19 +134,3 @@ inline TQuaternion<T> TEulerAngle<T>::toTQuaternion(const TEulerAngle& eulAngle)
 		);
 }
 
-template<class T>
-inline TMatrix44<T> TEulerAngle<T>::toRotationMatrix(const TEulerAngle<T>& eulAngle)
-{
-	T cosX = cos(eulAngle.x);
-	T sinX = sin(eulAngle.x);
-	T cosY = cos(eulAngle.y);
-	T sinY = sin(eulAngle.y);
-	T cosZ = cos(eulAngle.z);
-	T sinZ = sin(eulAngle.z);
-	return TMatrix44<T>(
-		cosY * cosZ - sinX * sinY * sinZ, -cosX * sinZ, sinY * cosZ + sinX * cosY * sinZ, 0,
-		cosY * sinZ + sinX * sinY * cosZ, cosX * cosZ, sinY * sinZ - sinX * cosY * cosZ, 0,
-		-cosX * sinY, sinX, cosX * cosY, 0,
-		0, 0, 0, 1
-		);
-}
