@@ -623,8 +623,8 @@ template<class T>
 inline void TMatrix44<T>::setTranslation(const TVector3<T>& trans)
 {
 	m14 = trans.x;
-	m24 = trans.x;
-	m34 = trans.x;
+	m24 = trans.y;
+	m34 = trans.z;
 	m44 = 1;
 }
 
@@ -688,9 +688,9 @@ inline void TMatrix44<T>::inverse()
 	T new24 = -(new21 * m14 + new22 * m24 + new23 * m34);
 	T new34 = -(new31 * m14 + new32 * m24 + new33 * m34);
 
-	m11 = new11, m12 = new12, m23 = new13, m14 = new14;
+	m11 = new11, m12 = new12, m13 = new13, m14 = new14;
 	m21 = new21, m22 = new22, m23 = new23, m24 = new24;
-	m31 = new31, m32 = new32, m23 = new33, m34 = new34;
+	m31 = new31, m32 = new32, m33 = new33, m34 = new34;
 }
 
 template<class T>

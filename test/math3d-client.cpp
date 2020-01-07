@@ -101,15 +101,19 @@ void testMatrix44()
 	printVect(angle);
 	Matrix transform = Matrix::makeMatrix(scale, angle, trans);
 	transform.decompose(scale, angle, trans);
-	printVect(scale);
-	printVect(angle);
-	printVect(trans);
-	transform.setRotation(angle);
-	transform.getRotation(angle);
-	printVect(angle);
+	printf("transform\n");
+	printMtx(transform);
+
 	invMtx = transform.getInverseMatrix();
 	rstMtx = transform * invMtx;
-	printMtx(rstMtx);
+	printf("inverse transform\n");
+	printMtx(invMtx);
+	printf("%f\n", rstMtx.determinant());
+
+	invMtx = transform.getUniInverseMatrix();
+	rstMtx = transform * invMtx;
+	printf("universal inverse transform\n");
+	printMtx(invMtx);
 	printf("%f\n", rstMtx.determinant());
 
 }
