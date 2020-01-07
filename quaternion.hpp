@@ -43,8 +43,8 @@ public:
 	static TQuaternion<T> makeQuaRotateAboutZ(P delta);
 	template<class P, class Q>
 	static TQuaternion<T> makeQuaRotateAboutAxis(const TVector3<P>& axis, Q delta);
-	template<class P>
-	static TQuaternion<T> makeQuaternion(const TEulerAngle<P>& eulerAngle);
+	template<class P, EulerType Type>
+	static TQuaternion<T> makeQuaternion(const TEulerAngle<P, Type>& eulerAngle);
 
 	/*
 	dot product
@@ -234,6 +234,7 @@ inline TQuaternion<T> TQuaternion<T>::makeQuaRotateAboutAxis(const TVector3<P>& 
 		axis.z * sinHalfTheta
 		);
 }
+
 
 template<class T>
 template<class P>

@@ -18,11 +18,6 @@ public:
 public:
 	TMatrix44() {};
 	TMatrix44(const TMatrix44<T>& mtx);
-	/*
-	make matrix with scale, eular angle and translation
-	the result equals to Matrix(trans)*Matrix(eular angle)*Matrix(scale)
-	*/
-	TMatrix44(const TVector3<T> scale, const TEulerAngle<T> eulAngle, const TVector3<T>& trans);
 	TMatrix44(
 		T m11, T m12, T m13, T m14,
 		T m21, T m22, T m23, T m24,
@@ -89,7 +84,7 @@ public:
 	/*
 	get rotation
 	*/
-	void getRotation(TEulerAngle<T>& eulerAngle);
+	void getRotation(TEulerAngle<T, EulerType::YXZ>& eulerAngle);
 	void getRotation(TQuaternion<T>& q);
 	/*
 	set translation of matrix
@@ -102,7 +97,8 @@ public:
 	/*
 	set rotation of matrix
 	*/
-	void setRotation(const TEulerAngle<T>& eulAngle);
+	template<EulerType Type>
+	void setRotation(const TEulerAngle<T, Type>& eulAngle);
 	/*
 	set scale of matrix
 	*/
@@ -143,7 +139,7 @@ public:
 	/*
 	decompse matrix
 	*/
-	void decompose(TVector3<T>& scale, TEulerAngle<T>& eulerAngle, TVector3<T>& trans);
+	void decompose(TVector3<T>& scale, TEulerAngle<T, EulerType::YXZ>& eulerAngle, TVector3<T>& trans);
 	/*
 	return determinant
 	Notice: this is only valid for transform matrix, in which m41=m42=m43=0, m44=1
@@ -159,12 +155,14 @@ public:
 	/*
 	compose matrix
 	*/
-	static TMatrix44<T> makeMatrix(const TVector3<T>& scale, const TEulerAngle<T>& eulerAngle, const TVector3<T>& trans);
+	template<EulerType Type>
+	static TMatrix44<T> makeMatrix(const TVector3<T>& scale, const TEulerAngle<T, Type>& eulerAngle, const TVector3<T>& trans);
 	/*
 	return rotation matrix
 	*/
 	static TMatrix44<T> makeRotationMatrix(const TQuaternion<T>& q);
-	static TMatrix44<T> makeRotationMatrix(const TEulerAngle<T>& eulerAngle);
+	template<EulerType Type>
+	static TMatrix44<T> makeRotationMatrix(const TEulerAngle<T, Type>& eulerAngle);
 	/*
 	return tranlation matrix
 	*/
@@ -272,16 +270,6 @@ inline TMatrix44<T>::TMatrix44(const TMatrix44<T>& mtx):
 {
 }
 
-template<class T>
-inline TMatrix44<T>::TMatrix44(const TVector3<T> scale, const TEulerAngle<T> eulerAngle, const TVector3<T>& trans)
-{
-	// first make rotation matrix
-	T cosY = cos(eulerAngle.y), cosX = cos(eulerAngle.x), cosZ = cos(eulerAngle.z);
-	T sinY = sin(eulerAngle.y), sinX = sin(eulerAngle.x), sinZ = sin(eulerAngle.z);
-	m11 = (cosY * cosZ - sinX * sinY * sinZ) * scale.x, m12 = -cosX * sinZ * scale.y,	m13 = (sinY * cosZ + sinX * cosY * sinZ) * scale.z, m14 = trans.x;
-	m21 = (cosY * sinZ + sinX * sinY * cosZ) * scale.x, m22 = cosX * cosZ * scale.y,	m23 = (sinY * sinZ - sinX * cosY * cosZ) * scale.z, m24 = trans.y;
-	m31 = (-cosX * sinY) * scale.x,						m32 = sinX * scale.y,			m33 = cosX * cosY * scale.z,						m34 = trans.z;
-}
 
 template<class T>
 inline TMatrix44<T>::TMatrix44(T m11, T m12, T m13, T m14, T m21, T m22, T m23, T m24, T m31, T m32, T m33, T m34, T m41, T m42, T m43, T m44):
@@ -464,7 +452,7 @@ inline void TMatrix44<T>::getTranslation(TVector3<T>& trans)
 }
 
 template<class T>
-inline void TMatrix44<T>::getRotation(TEulerAngle<T>& eulerAngle)
+inline void TMatrix44<T>::getRotation(TEulerAngle<T, EulerType::YXZ>& eulerAngle)
 {
 	TVector3<T> scale = getScale();
 	T new31 = m31 / scale.x;
@@ -574,7 +562,7 @@ inline TMatrix44<T> TMatrix44<T>::getTransposeMatrix()
 }
 
 template<class T>
-void TMatrix44<T>::decompose(TVector3<T>& scale, TEulerAngle<T>& eulerAngle, TVector3<T>& trans)
+void TMatrix44<T>::decompose(TVector3<T>& scale, TEulerAngle<T, EulerType::YXZ>& eulerAngle, TVector3<T>& trans)
 {
 	// get scale
 	scale = getScale();
@@ -638,7 +626,8 @@ inline void TMatrix44<T>::setRotation(const TQuaternion<T>& q)
 }
 
 template<class T>
-inline void TMatrix44<T>::setRotation(const TEulerAngle<T>& eulAngle)
+template<EulerType Type>
+inline void TMatrix44<T>::setRotation(const TEulerAngle<T, Type>& eulAngle)
 {
 	TVector3<T> scale = getScale();
 	TMatrix44<T> mtx = makeRotationMatrix(eulAngle);
@@ -727,16 +716,15 @@ inline TMatrix44<T> TMatrix44<T>::getInverseMatrix()
 
 
 template<class T>
-TMatrix44<T> TMatrix44<T>::makeMatrix(const TVector3<T>& scale, const TEulerAngle<T>& eulerAngle, const TVector3<T>& trans)
+template<EulerType Type>
+TMatrix44<T> TMatrix44<T>::makeMatrix(const TVector3<T>& scale, const TEulerAngle<T, Type>& eulerAngle, const TVector3<T>& trans)
 {
-	// first make rotation matrix
-	T cosY = cos(eulerAngle.y), cosX = cos(eulerAngle.x), cosZ = cos(eulerAngle.z);
-	T sinY = sin(eulerAngle.y), sinX = sin(eulerAngle.x), sinZ = sin(eulerAngle.z);
+	auto rotMtx = makeRotationMatrix(eulerAngle);
 	return TMatrix44<T>(
-		(cosY * cosZ - sinX * sinY * sinZ) * scale.x,	-cosX * sinZ * scale.y,	(sinY * cosZ + sinX * cosY * sinZ) * scale.z,	trans.x,
-		(cosY * sinZ + sinX * sinY * cosZ) * scale.x,	cosX * cosZ * scale.y,	(sinY * sinZ - sinX * cosY * cosZ) * scale.z,	trans.y,
-		(-cosX * sinY) * scale.x,						sinX * scale.y,			cosX * cosY * scale.z,							trans.z,
-		0,												0,						0,												1
+			rotMtx.m11 * scale.x,	rotMtx.m12 * scale.y, rotMtx.m13 * scale.z, trans.x,
+			rotMtx.m21 * scale.x,	rotMtx.m22 * scale.y, rotMtx.m23 * scale.z, trans.y,
+			rotMtx.m31 * scale.x,	rotMtx.m32 * scale.y, rotMtx.m33 * scale.z, trans.z,
+			0,	0,	0,	1
 		);
 }
 
@@ -752,13 +740,14 @@ inline TMatrix44<T> TMatrix44<T>::makeRotationMatrix(const TQuaternion<T>& q)
 }
 
 template<class T>
-inline TMatrix44<T> TMatrix44<T>::makeRotationMatrix(const TEulerAngle<T>& eulerAngle)
+template<EulerType Type>
+inline TMatrix44<T> TMatrix44<T>::makeRotationMatrix(const TEulerAngle<T, Type>& eulerAngle)
 {
 	T cosY = cos(eulerAngle.y), cosX = cos(eulerAngle.x), cosZ = cos(eulerAngle.z);
 	T sinY = sin(eulerAngle.y), sinX = sin(eulerAngle.x), sinZ = sin(eulerAngle.z);
 	switch (eulerAngle.type)
 	{
-	case EulerRotationSequence::YXZ:
+	case EulerType::YXZ:
 #define c1 cosZ
 #define s1 sinZ
 #define c2 cosX
@@ -771,8 +760,13 @@ inline TMatrix44<T> TMatrix44<T>::makeRotationMatrix(const TEulerAngle<T>& euler
 			-c2 * s3,	s2,	c2 * c3,	0,
 			0,	0,	0,	1
 			);
-#undef c1 s1 c2 s2 c3 s3
-	case EulerRotationSequence::ZXY:
+#undef c1
+#undef s1
+#undef c2
+#undef s2
+#undef c3
+#undef s3
+	case EulerType::ZXY:
 #define c1 cosY
 #define s1 sinY
 #define c2 cosX
@@ -785,8 +779,13 @@ inline TMatrix44<T> TMatrix44<T>::makeRotationMatrix(const TEulerAngle<T>& euler
 			c1 * s2 * s3 - c3 * s1,	c1 * c3 * s2 + s1 * s3,	c1 * c2,	0,
 			0,	0,	0,	1
 			);
-#undef c1 s1 c2 s2 c3 s3
-	case EulerRotationSequence::YZX:
+#undef c1
+#undef s1
+#undef c2
+#undef s2
+#undef c3
+#undef s3
+	case EulerType::YZX:
 #define c1 cosX
 #define s1 sinX
 #define c2 cosZ
@@ -799,8 +798,13 @@ inline TMatrix44<T> TMatrix44<T>::makeRotationMatrix(const TEulerAngle<T>& euler
 			c3 * s1 * s2 - c1 * s3,	c2 * s1,	c1 * c3 + s1 * s2 * s3,	0,
 			0,	0,	0,	1
 			);
-#undef c1 s1 c2 s2 c3 s3
-	case EulerRotationSequence::XZY:
+#undef c1
+#undef s1
+#undef c2
+#undef s2
+#undef c3
+#undef s3
+	case EulerType::XZY:
 #define c1 cosY
 #define s1 sinY
 #define c2 cosZ
@@ -813,8 +817,13 @@ inline TMatrix44<T> TMatrix44<T>::makeRotationMatrix(const TEulerAngle<T>& euler
 			-c2 * s1, c1 * s3 + c3 * s1 * s2, c1 * c3 - s1 * s2 * s3,	0,
 			0,	0,	0,	1
 			);
-#undef c1 s1 c2 s2 c3 s3
-	case EulerRotationSequence::XYZ:
+#undef c1
+#undef s1
+#undef c2
+#undef s2
+#undef c3
+#undef s3
+	case EulerType::XYZ:
 #define c1 cosZ
 #define s1 sinZ
 #define c2 cosY
@@ -827,8 +836,13 @@ inline TMatrix44<T> TMatrix44<T>::makeRotationMatrix(const TEulerAngle<T>& euler
 			-s2,	c2 * s3,	c2 * c3,	0,
 			0,	0,	0,	1
 			);
-#undef c1 s1 c2 s2 c3 s3
-	case EulerRotationSequence::ZYX:
+#undef c1
+#undef s1
+#undef c2
+#undef s2
+#undef c3
+#undef s3
+	case EulerType::ZYX:
 #define c1 cosX
 #define s1 sinX
 #define c2 cosY
@@ -841,7 +855,12 @@ inline TMatrix44<T> TMatrix44<T>::makeRotationMatrix(const TEulerAngle<T>& euler
 			s1 * s3 - c1 * c3 * s2,	c3 * s1 + c1 * s2 * s3,	c1 * c2,	0,
 			0,	0,	0,	1
 			);
-#undef c1 s1 c2 s2 c3 s3
+#undef c1
+#undef s1
+#undef c2
+#undef s2
+#undef c3
+#undef s3
 	}
 }
 

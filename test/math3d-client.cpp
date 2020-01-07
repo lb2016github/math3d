@@ -96,7 +96,7 @@ void testMatrix44()
 
 
 	
-	TEulerAngle<float> angle(TO_RAD(30), TO_RAD(40), TO_RAD(50));
+	TEulerAngle<float, EulerType::YXZ> angle(TO_RAD(30), TO_RAD(40), TO_RAD(50));
 	Vector3f scale(1, 3, 4), trans(10, 20 ,30);
 	printVect(angle);
 	Matrix transform = Matrix::makeMatrix(scale, angle, trans);
