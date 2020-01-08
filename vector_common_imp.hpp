@@ -1,20 +1,20 @@
 #include <math.h>
 #include "math_util.hpp"
 
-
 #define COMMA ,
-#define ZCODE(code)
-#define WCODE(code)
 
 #if defined(VECTOR4)
 #define VECTOR TVector4
 #define ZCODE(code) code
 #define WCODE(code) code
 #elif defined(VECTOR3)
-#define ZCODE(code) code
 #define VECTOR TVector3
+#define ZCODE(code) code
+#define WCODE(code)
 #else
 #define VECTOR TVector2
+#define ZCODE(code)
+#define WCODE(code)
 #endif // VECTOR4
 
 
@@ -360,3 +360,7 @@ inline VECTOR<T> operator*(T a, const VECTOR<T>& vec)
 	return VECTOR<T>(a * vec.x, a * vec.y ZCODE(COMMA  a * vec.z) WCODE(COMMA  a * vec.w));
 }
 
+#undef VECTOR
+#undef ZCODE
+#undef WCODE
+#undef COMMA
