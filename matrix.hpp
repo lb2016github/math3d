@@ -771,8 +771,8 @@ inline TMatrix44<T> TMatrix44<T>::makeRotationMatrix(const TEulerAngle<T, Type>&
 #define s1 sinY
 #define c2 cosX
 #define s2 sinX
-#define c3 cosY
-#define s3 sinY
+#define c3 cosZ
+#define s3 sinZ
 		return TMatrix44<T>(
 			c1 * c3 + s1 * s2 * s3,	c3 * s1 * s2 - c1 * s3,		c2 * s1,	0,
 			c2 * s3,	c2 * c3,	-s2,	0,
