@@ -251,19 +251,43 @@ inline TQuaternion<T> TQuaternion<T>::slerp(const TQuaternion<T>& a, const TQuat
 	if (t > 1) return b;
 	T cosAB = TQuaternion::dot(a, b);
 
-	T ax = a.x, ay = a.y, az = a.z, aw = a.w;
+	T bx = b.x, by = b.y, bz = b.z, bw = b.w;
 	if (cosAB < 0)
 	{
-		ax = -a.x;
-		ay = -a.y;
-		az = -a.z;
-		aw = -a.w;
+		bx = -b.x;
+		by = -b.y;
+		bz = -b.z;
+		bw = -b.w;
 		cosAB = -cosAB;
 	}
 
 	assert(cosAB < 1.1f);
 
-	// todo
+	float k0, k1;
+	// if cosAB neak to 1.0, just use line interprete
+	if (cosAB > 0.9999f)
+	{
+		k0 = 1 - t;
+		k1 = t;
+	}
+	else
+	{
+		// k0 = (sint(1-t)w)/sinw k1 = sintw / sinw
+		T sinAB = sqrt(1 - cosAB * cosAB);
+		T oneOverSinAB = 1 / sinAB;
+		T angleAB = atan2(sinAB, cosAB);
+		k0 = sin((1 - t) * angleAB) * oneOverSinAB;
+		k1 = sin(t * angleAB) * oneOverSinAB;
+	}
+
+	// iterpolation with a b
+	TQuaternion<T> result;
+	result.x = k0 * a.x + k1 * bx;
+	result.y = k0 * a.y + k1 * by;
+	result.z = k0 * a.z + k1 * bz;
+	result.w = k0 * a.w + k1 * bw;
+
+	return result;
 }
 
 template<class T>
