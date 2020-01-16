@@ -157,6 +157,7 @@ public:
 	*/
 	template<EulerType Type>
 	static TMatrix44<T> makeMatrix(const TVector3<T>& scale, const TEulerAngle<T, Type>& eulerAngle, const TVector3<T>& trans);
+	static TMatrix44<T> makeMatrix(const TVector3<T>& scale, const TQuaternion<T>& qua, const TVector3<T>& trans);
 	/*
 	return rotation matrix
 	*/
@@ -723,6 +724,19 @@ template<EulerType Type>
 TMatrix44<T> TMatrix44<T>::makeMatrix(const TVector3<T>& scale, const TEulerAngle<T, Type>& eulerAngle, const TVector3<T>& trans)
 {
 	auto rotMtx = makeRotationMatrix(eulerAngle);
+	return TMatrix44<T>(
+			rotMtx.m11 * scale.x,	rotMtx.m12 * scale.y, rotMtx.m13 * scale.z, trans.x,
+			rotMtx.m21 * scale.x,	rotMtx.m22 * scale.y, rotMtx.m23 * scale.z, trans.y,
+			rotMtx.m31 * scale.x,	rotMtx.m32 * scale.y, rotMtx.m33 * scale.z, trans.z,
+			0,	0,	0,	1
+		);
+}
+
+template<class T>
+template<EulerType Type>
+TMatrix44<T> TMatrix44<T>::makeMatrix(const TVector3<T>& scale, const TQuaternion<T>& qua, const TVector3<T>& trans)
+{
+	auto rotMtx = makeRotationMatrix(qua);
 	return TMatrix44<T>(
 			rotMtx.m11 * scale.x,	rotMtx.m12 * scale.y, rotMtx.m13 * scale.z, trans.x,
 			rotMtx.m21 * scale.x,	rotMtx.m22 * scale.y, rotMtx.m23 * scale.z, trans.y,
