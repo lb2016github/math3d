@@ -216,6 +216,9 @@ public:
 	TMatrix44<T>& operator*=(const TMatrix44<T>& mtx);
 
 	TMatrix44<T>& operator/=(T a);
+
+	bool operator ==(const TMatrix44<T>& mtx);
+	bool operator !=(const TMatrix44<T>& mtx);
 };
 
 template<class T>
@@ -1072,6 +1075,23 @@ inline TMatrix44<T>& TMatrix44<T>::operator/=(T a)
 {
 	OP_SELF_NUM(/=, a);
 	return *this;
+}
+template<class T>
+inline bool TMatrix44<T>::operator==(const TMatrix44<T>& mtx)
+{
+	return m11 == mtx.m11 && m12 == mtx.m12 && m13 == mtx.m13 && m14 == mtx.m14 &&
+		m21 == mtx.m21 && m22 == mtx.m22 && m23 == mtx.m23 && m24 == mtx.m24 &&
+		m31 == mtx.m31 && m32 == mtx.m32 && m33 == mtx.m33 && m34 == mtx.m34 &&
+		m41 == mtx.m41 && m42 == mtx.m42 && m43 == mtx.m43 && m44 == mtx.m44;
+}
+
+template<class T>
+inline bool TMatrix44<T>::operator!=(const TMatrix44<T>& mtx)
+{
+	return m11 != mtx.m11 || m12 != mtx.m12 || m13 != mtx.m13 || m14 != mtx.m14 ||
+		m21 != mtx.m21 || m22 != mtx.m22 || m23 != mtx.m23 || m24 != mtx.m24 ||
+		m31 != mtx.m31 || m32 != mtx.m32 || m33 != mtx.m33 || m34 != mtx.m34 ||
+		m41 != mtx.m41 || m42 != mtx.m42 || m43 != mtx.m43 || m44 != mtx.m44;
 }
 
 template<class T>
