@@ -733,7 +733,6 @@ TMatrix44<T> TMatrix44<T>::makeMatrix(const TVector3<T>& scale, const TEulerAngl
 }
 
 template<class T>
-template<EulerType Type>
 TMatrix44<T> TMatrix44<T>::makeMatrix(const TVector3<T>& scale, const TQuaternion<T>& qua, const TVector3<T>& trans)
 {
 	auto rotMtx = makeRotationMatrix(qua);
@@ -752,7 +751,7 @@ inline TMatrix44<T> TMatrix44<T>::makeRotationMatrix(const TQuaternion<T>& q)
 		2 * q.x * q.x + 2 * q.w * q.w - 1,	2 * q.x * q.y - 2 * q.w * q.z,		2 * q.x * q.z - 2 * q.w * q.y,		0,
 		2 * q.x * q.y + 2 * q.w * q.z,		2 * q.y * q.y + 2 * q.w * q.w - 1,	2 * q.y * q.z - 2 * q.w * q.x,		0,
 		2 * q.x * q.z - 2 * q.w * q.y,		2 * q.y * q.z + 2 * q.w * q.x,		2 * q.z * q.z + 2 * q.w * q.w -1,	0,
-		0,									0,									0,									1,
+		0,									0,									0,									1
 		);
 }
 
